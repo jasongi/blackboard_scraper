@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from Tkinter import *
+import Tkinter
+del Tkinter
+
 import thread
 import webbrowser
 from tkFileDialog import askdirectory
@@ -13,6 +16,8 @@ import requests
 import base64
 import string
 import getpass
+import multiprocessing
+import functools
 from io import open as iopen
 from urlparse import urlsplit
 
@@ -37,29 +42,32 @@ ileclist = []
 
 s = 0
 path = '.'
+
+
 def requests_image(
 	file_url,
 	s,
 	m,
-	t,
 	o,
 	k,
 	file_name,
 	path,
 	):
-	file_name = string.replace(file_name,":", "-")
-	if "." in file_name:
+
+	file_name = string.replace(file_name, ':', '-')
+	if '.' in file_name:
 		format = '.' + file_name.split('.')[1]
-	else: format = " "
+	else:
+		format = ' '
 	while len(format) > 7:
 		format = '.' + file_name.split('.')[1]
-		print(len(format))
-	while len(file_name) > 40:
-		file_name = file_name[:-9] + format
-		print(len(file_name))
-	o = string.replace(o,":", "-")
-	k = string.replace(k,":", "-")
+	while len(o) > 50:
+		o = o[:-1]
+	o = string.replace(o, ':', '-')
+	k = string.replace(k, ':', '-')
 	thepath = path + '/' + k + '/' + o + '/'
+	while len(thepath + file_name) > 256:
+		file_name = file_name[:-9] + format
 	if not os.path.isdir(thepath):
 		os.makedirs(thepath)
 	if not os.path.exists(path + file_name):
@@ -80,9 +88,10 @@ def requests_video(
 	file_name,
 	path,
 	):
-	file_name = string.replace(file_name,":", "-")
-	o = string.replace(o,":", "-")
-	k = string.replace(k,":", "-")
+
+	file_name = string.replace(file_name, ':', '-')
+	o = string.replace(o, ':', '-')
+	k = string.replace(k, ':', '-')
 	thepath = path + '/' + k + '/' + o + '/'
 	if not os.path.isdir(thepath):
 		os.makedirs(thepath)
@@ -131,6 +140,7 @@ def scraperec(
 	visitlist,
 	path,
 	):
+
 	url = \
 		'https://lms.curtin.edu.au/webapps/blackboard/content/listContent.jsp?course_id=_' \
 		+ m + '_1&content_id=_' + t + '_1&mode=reset'
@@ -141,16 +151,15 @@ def scraperec(
 	for pdf in soup.find_all('a'):
 		w = pdf.get('href')
 		if '.pdf' in w or 'xid' in w:
-			w.replace('https://lms.curtin.edu.au', '')
-			w.replace('lms.curtin.edu.au', '')
-			name = pdf.text.replace(' ', '')
+			w = string.replace(w, 'https://lms.curtin.edu.au/', '')
+			w = string.replace(w, 'lms.curtin.edu.au/', '')
+			name = pdf.text
 			if '1slideperpage' in name or '4slideperpage' in name:
 				name = urlsplit(w)[2].split('/')[-1] + '.pdf'  # fuck dave
 			requests_image(
 				'https://lms.curtin.edu.au/' + w,
 				s,
 				m,
-				t,
 				o,
 				k,
 				name,
@@ -191,6 +200,7 @@ def scrape(
 	o,
 	path,
 	):
+
 	visitlist = []
 	r = \
 		s.get('https://lms.curtin.edu.au/webapps/blackboard/execute/launcher?type=Course&id=_'
@@ -209,7 +219,6 @@ def scrape(
 				'https://lms.curtin.edu.au/' + w,
 				s,
 				m,
-				t,
 				'',
 				o,
 				name.replace(' ', ''),
@@ -235,6 +244,7 @@ def scrape(
 					visitlist,
 					path,
 					)
+	print 'done'
 
 
 def login(user, password):
@@ -280,6 +290,52 @@ def login(user, password):
 	return [s, unitlist, ileclist]
 
 
+def load(RootObj):
+	x = 10
+	y = 10
+	Root = Tk()
+	App = loading(Root)
+	App.pack(expand='yes', fill='both')
+	Root.geometry('200x100+' + str(x + 300) + '+' + str(y + 150))
+	Root.title('Loading')
+	Root.after(100, functools.partial(update, Root, App))
+	Root.mainloop()
+
+
+def update(Root, App):
+	App.progress()
+	Root.after(100, functools.partial(update, Root, App))
+
+
+class loading(Frame):
+
+	def __init__(self, Master=None, **kw):
+		self.__loadpoint = 0
+		apply(Frame.__init__, (self, Master), kw)
+		self.__Frame2 = Frame(self)
+		self.__Frame2.pack(side='top', padx=5, pady=0)
+		self.__Label3 = Label(self.__Frame2, text='Loading...')
+		self.__Label3.pack(side='top', padx=5, pady=5)
+
+		self.__Frame3 = Frame(self)
+		self.__Frame3.pack(side='top', padx=5, pady=0)
+		self.__Canvas1 = Canvas(self.__Frame3, width=100, height=50)
+		self.__Canvas1.pack(side='top', padx=5, pady=0)
+		self.__Canvas1.create_rectangle(0, 0, 100, 50, fill='grey')
+		self.__loadbar = self.__Canvas1.create_rectangle(0, 0,
+				self.__loadpoint + 10, 50, fill='blue')
+		self.__loadpoint += 10
+
+	def progress(self):
+		self.__Canvas1.delete(self.__loadbar)
+		self.__loadbar = \
+			self.__Canvas1.create_rectangle(self.__loadpoint, 0,
+				self.__loadpoint + 10, 50, fill='blue')
+		self.__loadpoint += 10
+		if self.__loadpoint > 90:
+			self.__loadpoint = 0
+
+
 class scrapergui(Frame):
 
 	def __init__(self, Master=None, **kw):
@@ -287,14 +343,17 @@ class scrapergui(Frame):
 		kw['width'] = 110
 
 		#
-		# Your code here
+		# Your code here........
+
 		#
 
 		apply(Frame.__init__, (self, Master), kw)
+		self.__RootObj = Frame
 		self.__Frame2 = Frame(self)
 		self.__Frame2.pack(side='top', padx=5, pady=0)
 		self.__Label3 = Label(self.__Frame2, text='Directory')
 		self.__Label3.pack(side='left', padx=5, pady=0)
+
 		self.__Entry3 = Entry(self.__Frame2, width=50)
 		self.__Entry3.pack(side='left', padx=5, pady=0)
 		self.__Button3 = Button(self.__Frame2, text='browse', width=10)
@@ -389,15 +448,20 @@ class scrapergui(Frame):
 		global s
 		global unitlist
 		global ileclist
+		proc = multiprocessing.Process(target=load,
+				args=(self.__RootObj, ))
+		proc.start()
 		z = login(self.__Entry1.get(), self.__Entry2.get())
 		s = z[0]
 		unitlist = z[1]
 		ileclist = z[2]
 		self.__Listbox1.delete(0, END)
+		self.__Listbox2.delete(0, END)
 		for ii in unitlist:
 			self.__Listbox1.insert(END, ii[1])
 		for ii in ileclist:
 			self.__Listbox2.insert(END, ii[1])
+		proc.terminate()
 
 	def __on_Button3_ButRel_1(self, Event=None):
 		filename = askdirectory()
@@ -409,7 +473,6 @@ class scrapergui(Frame):
 		global path
 		path = self.__Entry3.get()
 		for unit in map(int, self.__Listbox1.curselection()):
-			print unit
 			uid = unitlist[unit][0]
 			uname = unitlist[unit][1]
 			thread.start_new_thread(scrape, (uid, s, uname, path))
@@ -435,8 +498,6 @@ if '.' not in sys.path:
 
 if __name__ == '__main__':
 	Root = Tk()
-	import Tkinter
-	del Tkinter
 	App = scrapergui(Root)
 	App.pack(expand='yes', fill='both')
 	Root.geometry('800x600+10+10')
@@ -446,5 +507,6 @@ if __name__ == '__main__':
 	# --------------------------------------------------------------------------#
 	# User code should go above this comment.................................  #
 	# --------------------------------------------------------------------------#
+
 
 			
