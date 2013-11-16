@@ -154,7 +154,7 @@ def scraperec(
 			w = string.replace(w, 'https://lms.curtin.edu.au/', '')
 			w = string.replace(w, 'lms.curtin.edu.au/', '')
 			name = pdf.text
-			if '1slideperpage' in name or '4slideperpage' in name:
+			if '1 slide per page' in name or '4 slides per page' in name:
 				name = urlsplit(w)[2].split('/')[-1] + '.pdf'  # fuck dave
 			requests_image(
 				'https://lms.curtin.edu.au/' + w,
