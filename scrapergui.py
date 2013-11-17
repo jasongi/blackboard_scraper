@@ -12,7 +12,6 @@ from bs4 import BeautifulSoup
 import os
 import requests
 import urllib2
-import requests
 import base64
 import string
 import getpass
@@ -88,11 +87,20 @@ def requests_video(
 	file_name,
 	path,
 	):
-
 	file_name = string.replace(file_name, ':', '-')
+	if '.' in file_name:
+		format = '.' + file_name.split('.')[1]
+	else:
+		format = ' '
+	while len(format) > 7:
+		format = '.' + file_name.split('.')[1]
+	while len(o) > 50:
+		o = o[:-1]
 	o = string.replace(o, ':', '-')
 	k = string.replace(k, ':', '-')
 	thepath = path + '/' + k + '/' + o + '/'
+	while len(thepath + file_name) > 256:
+		file_name = file_name[:-9] + format
 	if not os.path.isdir(thepath):
 		os.makedirs(thepath)
 	if not os.path.exists(path + file_name):
@@ -103,7 +111,6 @@ def requests_video(
 				file.write(i.content)
 		else:
 			return False
-
 
 def ilec(url, s, path):
 	r = s.get(url)
