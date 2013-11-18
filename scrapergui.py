@@ -57,7 +57,8 @@ def requests_image(
 	if '.' in file_name:
 		format = '.' + file_name.split('.')[1]
 	else:
-		format = ' '
+		format = '.pdf'
+		file_name = file_name + format
 	while len(format) > 7:
 		format = '.' + file_name.split('.')[1]
 	while len(o) > 50:
@@ -72,8 +73,10 @@ def requests_image(
 	if not os.path.exists(path + file_name):
 		print file_url
 		i = s.get(file_url)
+		name = urlsplit(i.url)[2].split('/')
+		name = name[len(name)-1]
 		if i.status_code == requests.codes.ok:
-			with iopen(thepath + file_name, 'wb') as file:
+			with iopen(thepath + name, 'wb') as file:
 				file.write(i.content)
 		else:
 			return False
