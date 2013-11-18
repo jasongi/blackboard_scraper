@@ -46,35 +46,28 @@ path = '.'
 def requests_image(
 	file_url,
 	s,
-	m,
 	o,
 	k,
-	file_name,
 	path,
 	):
 
-	file_name = string.replace(file_name, ':', '-')
-	if '.' in file_name:
-		format = '.' + file_name.split('.')[1]
-	else:
-		format = '.pdf'
-		file_name = file_name + format
-	while len(format) > 7:
-		format = '.' + file_name.split('.')[1]
 	while len(o) > 50:
 		o = o[:-1]
 	o = string.replace(o, ':', '-')
 	k = string.replace(k, ':', '-')
 	thepath = path + '/' + k + '/' + o + '/'
-	while len(thepath + file_name) > 256:
-		file_name = file_name[:-9] + format
 	if not os.path.isdir(thepath):
 		os.makedirs(thepath)
-	if not os.path.exists(path + file_name):
-		print file_url
-		i = s.get(file_url)
-		name = urlsplit(i.url)[2].split('/')
-		name = name[len(name)-1]
+	i = s.get(file_url, allow_redirects=False)
+	if i.status_code == 302:
+		urlpath = i.headers['location']
+	else: 
+		urlpath = i.url
+	name = urlsplit(urlpath)[2].split('/')
+	name = name[len(name)-1]
+	if not os.path.exists(thepath + name):
+		print urlpath
+		i = s.get(urlpath)
 		if i.status_code == requests.codes.ok:
 			with iopen(thepath + name, 'wb') as file:
 				file.write(i.content)
@@ -169,10 +162,8 @@ def scraperec(
 			requests_image(
 				'https://lms.curtin.edu.au/' + w,
 				s,
-				m,
 				o,
 				k,
-				name,
 				path,
 				)
 	for link in soup.find_all('a'):
@@ -228,10 +219,8 @@ def scrape(
 			requests_image(
 				'https://lms.curtin.edu.au/' + w,
 				s,
-				m,
 				'',
 				o,
-				name.replace(' ', ''),
 				path,
 				)
 	for link in soup.find_all('a'):
