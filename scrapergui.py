@@ -24,12 +24,13 @@ from urlparse import urlsplit
 # ............................................................................  #
 # ................................  scrapergui................................  #
 # @author: Jason Giancono............................  #
+#..more info at jasongi.com/blackboard-scraper
 # todo: ....documentation
 # ................better Echo360 scraper
 # ................clean up rapyd junk
 # ................option to cancel downlaod
 # ................option to select individual files
-# ................better descriptions for iLecture links
+# ................better descriptions for iLecture links - done
 # ................better looking GUI (probably not going to happen)
 # ................work for all blackboard not just Curtin
 # ................use newer thread library, make it OO
