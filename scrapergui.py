@@ -154,7 +154,7 @@ def scraperec(
 	soup = BeautifulSoup(data)
 	for pdf in soup.find_all('a'):
 		w = pdf.get('href')
-		if '.pdf' in w or 'xid' in w:
+		if '.pdf' in w  or '.doc' in w or 'ppt' in w or 'xid' in w:
 			w = string.replace(w, 'https://lms.curtin.edu.au/', '')
 			w = string.replace(w, 'lms.curtin.edu.au/', '')
 			name = pdf.text
