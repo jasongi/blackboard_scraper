@@ -44,6 +44,11 @@ s = 0
 path = '.'
 
 #terrible name for function. This fetches media (be it pdf, ppt, doc, etc)
+#file_url: url of the media
+#s: session object from Requests
+#o: subpage/folder name
+#k: unit name
+#p: system path (specified in GUI)
 def requests_image(
 	file_url,
 	s,
@@ -76,6 +81,12 @@ def requests_image(
 			return False
 
 #this fetches the video for parsing the echo rss feed
+#file_url: url of the media
+#s: session object from Requests
+#o: subpage/folder name (this should be empty, not sure why it exists)
+#k: unit name
+#file_name name of video/lecture
+#path: system path (specified in GUI)
 def requests_video(
 	file_url,
 	s,
@@ -110,6 +121,9 @@ def requests_video(
 			return False
 			
 #This grabs all the ilecture videos in an rss
+#url: url of the rss feed
+#s: session object
+#path: path (specified in GUI)
 def ilec(url, s, path):
 	r = s.get(url)
 	data = r.text
@@ -136,6 +150,13 @@ def ilec(url, s, path):
 		ii = ii + 1
 
 #scrapes a blackboard page (and every page it links to)
+#m: unit id
+#t: content id
+#s: session object
+#o: file name
+#k: subpage/folder name
+#visitlist: list of pages visted (used to stop infinite loops)
+#path: path specified in GUI
 def scraperec(
 	m,
 	t,
@@ -197,6 +218,11 @@ def scraperec(
 	return visitlist
 
 #scrapes every page the main unit page links to
+#m: unit id
+#s: session object
+#o: subpage/folder name
+#path: path specified in GUI
+
 def scrape(
 	m,
 	s,
