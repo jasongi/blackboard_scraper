@@ -43,7 +43,7 @@ ileclist = []
 s = 0
 path = '.'
 
-
+#terrible name for function. This fetches media (be it pdf, ppt, doc, etc)
 def requests_image(
 	file_url,
 	s,
@@ -75,7 +75,7 @@ def requests_image(
 		else:
 			return False
 
-
+#this fetches the video for parsing the echo rss feed
 def requests_video(
 	file_url,
 	s,
@@ -108,7 +108,8 @@ def requests_video(
 				file.write(i.content)
 		else:
 			return False
-
+			
+#This grabs all the ilecture videos in an rss
 def ilec(url, s, path):
 	r = s.get(url)
 	data = r.text
@@ -134,7 +135,7 @@ def ilec(url, s, path):
 			)
 		ii = ii + 1
 
-
+#scrapes a blackboard page (and every page it links to)
 def scraperec(
 	m,
 	t,
@@ -195,7 +196,7 @@ def scraperec(
 					)
 	return visitlist
 
-
+#scrapes every page the main unit page links to
 def scrape(
 	m,
 	s,
@@ -246,7 +247,7 @@ def scrape(
 					)
 	print 'done'
 
-
+#starts the login session
 def login(user, password):
 	unitlist = []
 	ileclist = []
@@ -289,7 +290,7 @@ def login(user, password):
 								).get('title')[9:]])
 	return [s, unitlist, ileclist]
 
-
+#start the GUI
 def load(RootObj):
 	x = 10
 	y = 10
@@ -301,12 +302,12 @@ def load(RootObj):
 	Root.after(100, functools.partial(update, Root, App))
 	Root.mainloop()
 
-
+#I actually have no idea
 def update(Root, App):
 	App.progress()
 	Root.after(100, functools.partial(update, Root, App))
 
-
+#loading bar pop up
 class loading(Frame):
 
 	def __init__(self, Master=None, **kw):
@@ -335,7 +336,7 @@ class loading(Frame):
 		if self.__loadpoint > 90:
 			self.__loadpoint = 0
 
-
+#GUI stuff
 class scrapergui(Frame):
 
 	def __init__(self, Master=None, **kw):
@@ -430,20 +431,20 @@ class scrapergui(Frame):
 	#
 	# Start of event handler methods
 	#
-
+	
 	def __on_Button5_ButRel_1(self, Event=None):
 		global ileclist
 		for lecs in map(int, self.__Listbox2.curselection()):
 			url = ileclist[lecs][0]
 			webbrowser.open('https://lms.curtin.edu.au' + url, new=1,
 							autoraise=True)
-
+	
 	def __on_Button4_ButRel_1(self, Event=None):
 		global s
 		global path
 		path = self.__Entry3.get()
 		thread.start_new_thread(ilec, (self.__Entry4.get(), s, path))
-
+	#login and get unit list
 	def __on_Button2_ButRel_1(self, Event=None):
 		global s
 		global unitlist
@@ -462,12 +463,13 @@ class scrapergui(Frame):
 		for ii in ileclist:
 			self.__Listbox2.insert(END, ii[1])
 		proc.terminate()
-
+		
+	#GUI browse button
 	def __on_Button3_ButRel_1(self, Event=None):
 		filename = askdirectory()
 		self.__Entry3.delete(0, END)
 		self.__Entry3.insert(0, filename)
-
+	#scrape everything selected
 	def __on_Button1_ButRel_1(self, Event=None):
 		global s
 		global path
@@ -489,13 +491,12 @@ class scrapergui(Frame):
 	# --------------------------------------------------------------------------#
 
 # Adjust sys.path so we can find other modules of this project
-
 import sys
 if '.' not in sys.path:
 	sys.path.append('.')
 
 # Put lines to import other modules of this project here
-
+#init the program
 if __name__ == '__main__':
 	Root = Tk()
 	App = scrapergui(Root)
