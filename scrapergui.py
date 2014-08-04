@@ -475,9 +475,9 @@ class scrapergui(Frame):
 		global s
 		global unitlist
 		global ileclist
-		proc = multiprocessing.Process(target=load,
-				args=(self.__RootObj, ))
-		proc.start()
+		#proc = multiprocessing.Process(target=load,
+		#		args=(self.__RootObj, ))
+		#proc.start()
 		z = login(self.__Entry1.get(), self.__Entry2.get())
 		s = z[0]
 		unitlist = z[1]
@@ -488,7 +488,7 @@ class scrapergui(Frame):
 			self.__Listbox1.insert(END, ii[1])
 		for ii in ileclist:
 			self.__Listbox2.insert(END, ii[1])
-		proc.terminate()
+		#proc.terminate()
 		
 	#GUI browse button
 	def __on_Button3_ButRel_1(self, Event=None):
