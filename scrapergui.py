@@ -302,7 +302,7 @@ def login(user, password):
 				l.replace(' /webapps/portal/frameset.jsp?tab_tab_group_id=_4_1&url=%2Fwebapps%2Fblackboard%2Fexecute%2Flauncher%3Ftype%3DCourse%26id%3D_'
 						  , '')
 			l = l.replace('_1%26url%3D', '')
-			unitlist.append([l, link.string])
+			unitlist.append([l, link.string.replace('/','')])
 	for unit in unitlist:
 		r = \
 			s.get('https://lms.curtin.edu.au/webapps/blackboard/execute/launcher?type=Course&id=_'
@@ -313,7 +313,7 @@ def login(user, password):
 			if 'Echo' in link.get('href'):
 				ileclist.append([link.get('href'),
 								soup.find(id='courseMenu_link'
-								).get('title')[9:]])
+								).get('title')[9:].replace('/','')])
 	return [s, unitlist, ileclist]
 
 #start the GUI
