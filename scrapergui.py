@@ -71,6 +71,7 @@ def requests_image(
 		urlpath = i.url
 	name = urlsplit(urlpath)[2].split('/')
 	name = name[len(name)-1]
+	name = urllib2.unquote(name).decode('utf8')
 	if not os.path.exists(thepath + name):
 		print urlpath
 		i = s.get(urlpath)
@@ -527,7 +528,7 @@ if __name__ == '__main__':
 	Root = Tk()
 	App = scrapergui(Root)
 	App.pack(expand='yes', fill='both')
-	Root.geometry('800x600+10+10')
+	Root.geometry('600x600+10+10')
 	Root.title('The Greatest Blackboard/iLecture Scraper in the World')
 	Root.mainloop()
 
