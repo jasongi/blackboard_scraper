@@ -529,7 +529,7 @@ if __name__ == '__main__':
 	App = scrapergui(Root)
 	App.pack(expand='yes', fill='both')
 	Root.geometry('600x600+10+10')
-	Root.title('The Greatest Blackboard/iLecture Scraper in the World')
+	Root.title('Blackboard/iLecture Scraper - By Jason Giancono')
 	Root.mainloop()
 
 	# --------------------------------------------------------------------------#
