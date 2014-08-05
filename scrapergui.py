@@ -43,6 +43,12 @@ ileclist = []
 s = 0
 path = '.'
 
+valid_chars = '-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+def sanitize(filename):
+	filename = ''.join(c for c in filename if c in valid_chars)
+	while ((filename[len(filename)-1] == ' ') or (filename[len(filename)-1] == '.')):
+		filename = filename[:-1]
+	return filename
 #terrible name for function. This fetches media (be it pdf, ppt, doc, etc)
 #file_url: url of the media
 #s: session object from Requests
@@ -59,8 +65,12 @@ def requests_image(
 
 	while len(o) > 50:
 		o = o[:-1]
-	o = string.replace(o, ':', '-')
-	k = string.replace(k, ':', '-')
+	while len(k) > 50:
+		k = k[:-1]
+	o = string.replace(o, ':', ' ')
+	k = string.replace(k, ':', ' ')
+	o = sanitize(o)
+	k = sanitize(k)
 	thepath = path + '/' + k + '/' + o + '/'
 	if not os.path.isdir(thepath):
 		os.makedirs(thepath)
@@ -72,6 +82,17 @@ def requests_image(
 	name = urlsplit(urlpath)[2].split('/')
 	name = name[len(name)-1]
 	name = urllib2.unquote(name).decode('utf8')
+	while ((len(thepath + name) > 240) or (len(name) > 50)):
+		if "." in name:
+			filename = name.split('.')
+			ext = filename[len(filename)-1]
+			prefix = ''
+			for x in filename[:-1]:
+				prefix = prefix + x
+			name = prefix[:-1] + '.' + ext
+		else:
+			name = name[:-1]
+	name = sanitize(name)
 	if not os.path.exists(thepath + name):
 		print urlpath
 		i = s.get(urlpath)
