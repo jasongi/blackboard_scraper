@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 import os
 import requests
 import urllib2
+import datetime
 import base64
 import string
 import getpass
@@ -419,11 +420,15 @@ class scrapergui(Frame):
 		self.__Frame3.pack(side='top', padx=5, pady=0)
 		self.__Frame1 = Frame(self)
 		self.__Frame1.pack(side='top', padx=5, pady=5)
-		self.__FrameLink = Frame(self)
-		self.__FrameLink.pack( padx=5, pady=0)
-		self.__lbl_link = Label(self, text="I'm running for University Council, find out more\n here:  jasongi.com/university-council-elections", fg="Blue", cursor="hand2")
-		self.__lbl_link.pack(side='bottom')
-		self.__lbl_link.bind("<Button-1>", self.__link_callback)
+		if (datetime.datetime.now() < datetime.datetime(2015,3,31)):
+			self.__FrameLink = Frame(self)
+			self.__FrameLink.pack( padx=5, pady=0)
+			self.__FrameLink2 = Frame(self)
+			self.__FrameLink2.pack(side='bottom', padx=5, pady=5)
+			self.__lbl_link = Label(self, text="I'm running for University Council, find out more here:  jasongi.com/university-council-elections", fg="Blue", cursor="hand2")
+			self.__lbl_link.pack(side='bottom')
+			self.__lbl_link.bind("<Button-1>", self.__link_callback)
+
 
 		self.__LFrame = Frame(self, padx=5, pady=0)
 		self.__LFrame.pack(side='left', padx=5, pady=0)
