@@ -47,8 +47,14 @@ path = '.'
 valid_chars = '-_.() abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 def sanitize(filename):
 	filename = ''.join(c for c in filename if c in valid_chars)
-	while ((filename[len(filename)-1] == ' ') or (filename[len(filename)-1] == '.')):
-		filename = filename[:-1]
+	try:
+		while ((filename[len(filename)-1] == ' ') or (filename[len(filename)-1] == '.')):
+			filename = filename[:-1]
+	except IndexError:
+		if len(filename) < 1:
+			return 'file_' + filename
+		else:
+			return filename
 	return filename
 #terrible name for function. This fetches media (be it pdf, ppt, doc, etc)
 #file_url: url of the media
@@ -205,13 +211,16 @@ def scraperec(
 			name = pdf.text
 			if '1 slide per page' in name or '4 slides per page' in name:
 				name = urlsplit(w)[2].split('/')[-1] + '.pdf'  # fuck dave
-			requests_image(
-				'https://lms.curtin.edu.au/' + w,
-				s,
-				o,
-				k,
-				path,
-				)
+			try:
+				requests_image(
+					'https://lms.curtin.edu.au/' + w,
+					s,
+					o,
+					k,
+					path,
+					)
+			except:
+				pass
 	for link in soup.find_all('a'):
 		l = link.get('href')
 		if l.startswith('https://lms.curtin.edu.au/webapps/blackboard/content/listContent.jsp?'
@@ -267,13 +276,16 @@ def scrape(
 			name = pdf.text.replace(' ', '')
 			if '1slideperpage' in name or '4slideperpage' in name:
 				name = urlsplit(w)[2].split('/')[-1] + '.pdf'  # fuck dave
-			requests_image(
+			try:
+				requests_image(
 				'https://lms.curtin.edu.au/' + w,
 				s,
 				'',
 				o,
 				path,
 				)
+			except:
+				pass
 	for link in soup.find_all('a'):
 		l = link.get('href')
 		if l.startswith('https://lms.curtin.edu.au/webapps/blackboard/content/listContent.jsp?'
