@@ -276,9 +276,13 @@ def scrape(
 	for link in soup.find_all('a'):
 		l = link.get('href')
 		if l.startswith('https://lms.curtin.edu.au/webapps/blackboard/content/listContent.jsp?'
+						) or l.startswith('/webapps/blackboard/content/listContent.jsp?'
 						):
 			l = \
 				l.replace('https://lms.curtin.edu.au/webapps/blackboard/content/listContent.jsp?course_id=_'
+						   + m + '_1&content_id=_', '')
+			l = \
+				l.replace('/webapps/blackboard/content/listContent.jsp?course_id=_'
 						   + m + '_1&content_id=_', '')
 			l = l.replace('_1&mode=reset', '')
 			C = l
@@ -318,12 +322,12 @@ def login(user, password):
 
 	for link in soup.find_all('a'):
 		l = link.get('href')
-		if l.startswith(' /webapps/portal/frameset.jsp?tab_tab_group_id=_4_1&url=%2Fwebapps%2Fblackboard%2Fexecute%2Flauncher%3Ftype%'
+		if l.startswith(' /webapps/blackboard/execute/launcher?type=Course'
 						):
 			l = \
-				l.replace(' /webapps/portal/frameset.jsp?tab_tab_group_id=_4_1&url=%2Fwebapps%2Fblackboard%2Fexecute%2Flauncher%3Ftype%3DCourse%26id%3D_'
+				l.replace(' /webapps/blackboard/execute/launcher?type=Course&id=_'
 						  , '')
-			l = l.replace('_1%26url%3D', '')
+			l = l.replace('_1&url=', '')
 			unitlist.append([l, link.string.replace('/','')])
 	for unit in unitlist:
 		r = \
@@ -415,6 +419,11 @@ class scrapergui(Frame):
 		self.__Frame3.pack(side='top', padx=5, pady=0)
 		self.__Frame1 = Frame(self)
 		self.__Frame1.pack(side='top', padx=5, pady=5)
+		self.__FrameLink = Frame(self)
+		self.__FrameLink.pack( padx=5, pady=0)
+		self.__lbl_link = Label(self, text="I'm running for University Council, find out more\n here:  jasongi.com/university-council-elections", fg="Blue", cursor="hand2")
+		self.__lbl_link.pack(side='bottom')
+		self.__lbl_link.bind("<Button-1>", self.__link_callback)
 
 		self.__LFrame = Frame(self, padx=5, pady=0)
 		self.__LFrame.pack(side='left', padx=5, pady=0)
@@ -460,18 +469,23 @@ class scrapergui(Frame):
 							self.__on_Button5_ButRel_1)
 		self.__Frame6 = Frame(self.__RFrame)
 		self.__Frame6.pack(side='top', padx=5, pady=5)
-		self.__Label4 = Label(self.__Frame6, text='iLecture RSS')
-		self.__Label4.pack(side='left', padx=5, pady=5)
-		self.__Entry4 = Entry(self.__Frame6)
-		self.__Entry4.pack(side='left', padx=5, pady=5)
-		self.__Button4 = Button(self.__Frame6, text='scrape', width=10)
-		self.__Button4.pack(side='left', padx=5, pady=5)
+		self.__Frame10 = Frame(self.__Frame6)
+		self.__Frame10.pack(side='top', padx=5, pady=0)
+		self.__Frame11 = Frame(self.__Frame6)
+		self.__Frame11.pack(side='top', padx=5, pady=0)
+		self.__Label4 = Label(self.__Frame10, text='Paste iLecture Video RSS URL Here')
+		self.__Label4.pack(side='left', padx=5, pady=0)
+		self.__Entry4 = Entry(self.__Frame11)
+		self.__Entry4.pack(side='left', padx=5, pady=0)
+		self.__Button4 = Button(self.__Frame11, text='scrape', width=10)
+		self.__Button4.pack(side='left', padx=5, pady=0)
 		self.__Button4.bind('<ButtonRelease-1>',
 							self.__on_Button4_ButRel_1)
 		self.__Frame9 = Frame(self.__LFrame)
 		self.__Frame9.pack(side='top', padx=5, pady=45)
 		self.__Frame8 = Frame(self.__RFrame)
 		self.__Frame8.pack(side='top', padx=5, pady=15)
+		
 
 		#
 		# Your code here
@@ -479,7 +493,8 @@ class scrapergui(Frame):
 	#
 	# Start of event handler methods
 	#
-	
+	def __link_callback(self, Event=None):
+		webbrowser.open_new(r"jasongi.com/university-council-elections")
 	def __on_Button5_ButRel_1(self, Event=None):
 		global ileclist
 		for lecs in map(int, self.__Listbox2.curselection()):
