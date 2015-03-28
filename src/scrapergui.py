@@ -3,8 +3,7 @@
 
 from Tkinter import *
 import Tkinter
-del Tkinter
-
+import tkMessageBox
 import thread
 import webbrowser
 from tkFileDialog import askdirectory
@@ -20,6 +19,9 @@ import multiprocessing
 import functools
 from io import open as iopen
 from urlparse import urlsplit
+import platform
+if "Darwin" in platform.system():
+		os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
 
 # ------------------------------------------------------------------------------#
 # ............................................................................  #
@@ -310,7 +312,7 @@ def scrape(
 					visitlist,
 					path,
 					)
-	print 'done'
+	print o + ' has finished'
 
 #starts the login session
 def login(user, password):
@@ -554,6 +556,7 @@ class scrapergui(Frame):
 		global s
 		global path
 		path = self.__Entry3.get()
+		slist = ''
 		for unit in map(int, self.__Listbox1.curselection()):
 			uid = unitlist[unit][0]
 			uname = unitlist[unit][1]
