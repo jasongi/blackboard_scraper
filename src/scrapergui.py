@@ -238,17 +238,20 @@ def scraperec(
 			l = l.replace('_1&mode=reset', '')
 			l = l.replace('_1', '')
 			C = l
-			if C not in visitlist:
-				visitlist.append(C)
-				visitlist = scraperec(
-					m,
-					l,
-					s,
-					link.span.string,
-					k,
-					visitlist,
-					path,
-					)
+			try:
+				if C not in visitlist:
+					visitlist.append(C)
+					visitlist = scraperec(
+						m,
+						l,
+						s,
+						link.span.string,
+						k,
+						visitlist,
+						path,
+						)
+			except:
+				pass
 	return visitlist
 
 #scrapes every page the main unit page links to
@@ -301,17 +304,20 @@ def scrape(
 						   + m + '_1&content_id=_', '')
 			l = l.replace('_1&mode=reset', '')
 			C = l
-			if C not in visitlist:
-				visitlist.append(C)
-				visitlist = scraperec(
-					m,
-					l,
-					s,
-					link.span.string,
-					o,
-					visitlist,
-					path,
-					)
+			try:
+				if C not in visitlist:
+					visitlist.append(C)
+					visitlist = scraperec(
+						m,
+						l,
+						s,
+						link.span.string,
+						o,
+						visitlist,
+						path,
+						)
+			except:
+				pass
 	print o + ' has finished'
 
 #starts the login session
