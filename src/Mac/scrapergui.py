@@ -590,7 +590,7 @@ if __name__ == '__main__':
 	Root = Tk()
 	App = scrapergui(Root)
 	App.pack(expand='yes', fill='both')
-	Root.geometry('600x600+10+10')
+	Root.geometry('650x600+10+10')
 	Root.title('Blackboard/iLecture Scraper - By Jason Giancono')
 	Root.mainloop()
 
