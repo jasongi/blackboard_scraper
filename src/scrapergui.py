@@ -350,17 +350,20 @@ def login(user, password):
 						  , '')
 			l = l.replace('_1&url=', '')
 			unitlist.append([l, link.string.replace('/','')])
-	for unit in unitlist:
-		r = \
-			s.get('https://lms.curtin.edu.au/webapps/blackboard/execute/launcher?type=Course&id=_'
-				   + unit[0] + '_1')
-		data = r.text
-		soup = BeautifulSoup(data)
-		for link in soup.find_all('a'):
-			if 'Echo' in link.get('href'):
-				ileclist.append([link.get('href'),
-								soup.find(id='courseMenu_link'
-								).get('title')[9:].replace('/','')])
+	try:
+		for unit in self.unitlist:
+			request = \
+				session.get('https://lms.curtin.edu.au/webapps/blackboard/execute/launcher?type=Course&id=_'
+					   + unit[0] + '_1')
+			data = request.text
+			soup = BeautifulSoup(data)
+			for link in soup.find_all('a'):
+				if 'Echo' in link.get('href'):
+					self.ileclist.append([link.get('href'),
+									soup.find(id='courseMenu_link'
+									).get('title')[9:].replace('/','')])
+	except:
+		pass
 	return [s, unitlist, ileclist]
 
 #start the GUI
